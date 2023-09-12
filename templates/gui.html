@@ -2,9 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GUI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON a Código</title>
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
 </head>
 <body>
-UWU
+    <h1>JSON a Código</h1>
+    <label for="url">ICS URL:</label><input id="url" type="text">
+    <label for="subject">Subject:</label><input id="subject" type="text">
+    <button onclick="boton()">Convertir a Código</button>
+    <pre id="codeOutput"></pre>
+
+    <script>
+        function boton(){
+            const data = {
+                'url': document.getElementById("url").value,
+                'subject': document.getElementById("subject").value
+            }
+            const encodedText = utf8Base64UrlSafeEncode(JSON.stringify(data))
+            document.getElementById("codeOutput").innerHTML = "<a target='_blank' href='c/"+encodedText+"'>"+encodedText+"</a>"
+        }
+    </script>
 </body>
 </html>
