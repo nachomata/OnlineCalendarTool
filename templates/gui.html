@@ -11,11 +11,13 @@
     <h1>Online Calendar Tool</h1>
     <div>Merge multiple calendars from ICS feed URL. Create a filter to sync selected events types.
     Keep it up to date with a new ICS feed URL that sync automatically.</div>
-    <div>
-        <form class="mainForm" style="border: solid red">
-            <label>ICS feed URL: <input class="url" type="url" ></label>
-            <button type="button" onclick="getEvents(0)">Get events</button>
-        </form>
+    <template id="templateForm"><form class="mainForm" style="border: solid red">
+                <label>ICS feed URL: <input class="url" type="url" ></label>
+                <button type="button">Get events</button>
+    </form></template>
+    <div id="formsDiv" style="border: solid blue">
+        <button onclick="addForm()">Add calendar</button>
+        <button onclick="removeForm()">Remove calendar</button>
     </div>
 
     <button onclick="generateLink()">Generate Link</button>

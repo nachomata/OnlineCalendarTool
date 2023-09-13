@@ -44,3 +44,34 @@ function generateLink(){
     const encodedText = utf8Base64UrlSafeEncode(JSON.stringify(data))
     document.getElementById("codeOutput").innerHTML = "<a target='_blank' href='c/"+encodedText+"'>"+encodedText+"</a>"
 }
+
+let numberOfForms = 0;
+document.addEventListener("DOMContentLoaded", function() {
+    addForm();
+});
+
+
+
+function addForm(){
+    numberOfForms++
+    const template = document.getElementById("templateForm")
+    let newForm = template.content.cloneNode(true);
+    const formDivs = document.getElementById("formsDiv")
+    const tmpId = numberOfForms-1
+    newForm.querySelector("button").onclick = function (){
+        getEvents(tmpId)
+    }
+    formDivs.appendChild(newForm)
+}
+
+function removeForm(){
+    if (numberOfForms>1){
+        numberOfForms--
+        const formDivs = document.getElementById("formsDiv")
+        console.log(formDivs.lastChild)
+        formDivs.removeChild(formDivs.lastChild)
+
+    }
+
+}
+
