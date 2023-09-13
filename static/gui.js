@@ -32,7 +32,9 @@ function generateLink(){
         const events = form.querySelectorAll('input[type="checkbox"]')
         let selectedEvents = []
         Array.from(events).forEach(event => {
-            selectedEvents.push(event.value)
+            if (event.checked) {
+                selectedEvents.push(event.value)
+            }
         })
         data.push([form.querySelector(".url").value, selectedEvents])
     })
