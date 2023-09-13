@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON a Código</title>
+    <title>Online Calendar Tool</title>
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
+    <script src="{{ url_for('static', filename='gui.js') }}"></script>
 </head>
 <body>
-    <h1>JSON a Código</h1>
-    <label for="url">ICS URL:</label><input id="url" type="text">
-    <label for="subject">Subject:</label><input id="subject" type="text">
-    <button onclick="boton()">Convertir a Código</button>
-    <pre id="codeOutput"></pre>
+    <h1>Online Calendar Tool</h1>
+    <div>Merge multiple calendars from ICS feed URL. Create a filter to sync selected events types.
+    Keep it up to date with a new ICS feed URL that sync automatically.</div>
+    <div>
+        <form class="mainForm" style="border: solid red">
+            <label>ICS feed URL: <input class="url" type="url" ></label>
+            <button type="button" onclick="getEvents(0)">Get events</button>
+        </form>
+    </div>
 
-    <script>
-        function boton(){
-            const data = {
-                'url': document.getElementById("url").value,
-                'subject': document.getElementById("subject").value
-            }
-            const encodedText = utf8Base64UrlSafeEncode(JSON.stringify(data))
-            document.getElementById("codeOutput").innerHTML = "<a target='_blank' href='c/"+encodedText+"'>"+encodedText+"</a>"
-        }
-    </script>
+    <button onclick="generateLink()">Generate Link</button>
+    <pre id="codeOutput"></pre>
 </body>
 </html>
