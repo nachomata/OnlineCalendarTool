@@ -131,6 +131,4 @@ function removeForm(button){
 
 document.addEventListener("DOMContentLoaded", function() {
     addForm();
-    document.querySelector("#formsDiv > form > div > label > input").value = "https://ics.teamup.com/feed/ksq43oop2at5jcip66/8349731.ics"
-    document.querySelector("#formsDiv > form > div > button:nth-child(2)").click()
 });
