@@ -1,6 +1,14 @@
-function getEvents(formID) {
-    const form = document.getElementsByClassName("mainForm")[formID]
-    const url = form.querySelector(".url").value
+function getEvents(button) {
+    // Eliminar el form anterior
+    const form = button.parentElement.parentElement;
+    const toDelete = form.querySelector(".optionsDiv")
+    if (toDelete != null) form.removeChild(toDelete)
+
+    // Crear el cargando...
+    form.appendChild(document.createTextNode("Obteniendo eventos desde URL..."))
+
+    // hacer el fetch
+    const url = button.previousElementSibling.querySelector(".url").value
     fetch(
         '/getEvents',
         {
@@ -9,6 +17,24 @@ function getEvents(formID) {
             body: JSON.stringify({url: url})
         }
     ).then(response => response.json()).then(data => {
+        // eliminar el cargando...
+        form.removeChild(form.lastChild)
+
+        // crear options
+        let optionsDiv = document.createElement("div")
+        optionsDiv.classList.add("optionsDiv")
+        let selectAllCheckbox = document.createElement("input");
+        selectAllCheckbox.type = "checkbox";
+        selectAllCheckbox.classList.add("selectAll");
+        let selectAllLabel = document.createElement("label");
+        selectAllLabel.appendChild(selectAllCheckbox);
+        selectAllLabel.appendChild(document.createTextNode("Seleccionar todos"));
+
+        optionsDiv.appendChild(selectAllLabel);
+
+
+        let eventsDiv = document.createElement("div")
+        eventsDiv.classList.add("eventsDiv")
         let label = undefined
         let option = document.createElement("input")
         option.type = "checkbox"
@@ -17,8 +43,16 @@ function getEvents(formID) {
             option.value = data[i]
             label.appendChild(option.cloneNode())
             label.appendChild(document.createTextNode(data[i]))
-            form.appendChild(label)
+            eventsDiv.appendChild(label)
         }
+        optionsDiv.appendChild(eventsDiv)
+        selectAllCheckbox.addEventListener("change", function() {
+            let checkboxes = eventsDiv.querySelectorAll('input[type="checkbox"]');
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = selectAllCheckbox.checked;
+            }
+        });
+        form.appendChild(optionsDiv)
     })
 }
 
@@ -30,7 +64,7 @@ function generateLink(){
         const events = form.querySelectorAll('input[type="checkbox"]')
         let selectedEvents = []
         Array.from(events).forEach(event => {
-            if (event.checked) {
+            if (event.checked && !event.classList.contains("selectAll")) {
                 selectedEvents.push(event.value)
             }
         })
@@ -39,13 +73,35 @@ function generateLink(){
 
 
     const encodedText = utf8Base64UrlSafeEncode(JSON.stringify(data))
-    document.getElementById("codeOutput").innerHTML = "<a target='_blank' href='c/"+encodedText+"'>"+encodedText+"</a>"
+    let url = "https://calendar.nachomata.es/c/"+encodedText
+
+    // mostrar enlace
+    const linkInput = document.getElementById("linkInput");
+    linkInput.value = url;
+
+    // Agrega un evento click al botón para copiar el enlace al portapapeles
+    const copyButton = document.getElementById("copyButton");
+    copyButton.addEventListener("click", async () => {
+        const linkDiv = document.getElementById("linkDiv")
+        let result
+        let buttonDisplay
+        try {
+            await navigator.clipboard.writeText(url);
+            result = '¡Link copiado al portapapeles!'
+            buttonDisplay = 'inline-block'
+        } catch (err) {
+            result = '¡Link generado correctamente!'
+            buttonDisplay = 'none'
+        }
+        linkDiv.querySelector("span").innerText = result
+        linkDiv.querySelector("button").style.display = buttonDisplay
+        linkDiv.style.display = 'flex'
+    });
+    copyButton.click()
+
 }
 
 let numberOfForms = 0;
-document.addEventListener("DOMContentLoaded", function() {
-    addForm();
-});
 
 
 
@@ -54,20 +110,27 @@ function addForm(){
     const template = document.getElementById("templateForm")
     let newForm = template.content.cloneNode(true);
     const formDivs = document.getElementById("formsDiv")
-    const tmpId = numberOfForms-1
-    newForm.querySelector("button").onclick = function (){
-        getEvents(tmpId)
+    let buttons = newForm.querySelectorAll("button")
+    buttons[0].onclick = function (){
+        getEvents(this)
     }
+    buttons[1].onclick = function (){
+        removeForm(this)
+    }
+
     formDivs.appendChild(newForm)
 }
 
-function removeForm(){
-    if (numberOfForms>1){
-        numberOfForms--
-        const formDivs = document.getElementById("formsDiv")
-        formDivs.removeChild(formDivs.lastChild)
-
-    }
+function removeForm(button){
+    numberOfForms--
+    const formDivs = document.getElementById("formsDiv")
+    formDivs.removeChild(button.parentElement.parentElement)
+    if (numberOfForms===0) addForm()
 
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    addForm();
+    document.querySelector("#formsDiv > form > div > label > input").value = "https://ics.teamup.com/feed/ksq43oop2at5jcip66/8349731.ics"
+    document.querySelector("#formsDiv > form > div > button:nth-child(2)").click()
+});

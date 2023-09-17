@@ -6,21 +6,39 @@
     <title>Online Calendar Tool</title>
     <script src="{{ url_for('static', filename='functions.js') }}"></script>
     <script src="{{ url_for('static', filename='gui.js') }}"></script>
-</head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet"></head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 <body>
+<div id="main" class="verticalCenter">
     <h1>Online Calendar Tool</h1>
-    <div>Merge multiple calendars from ICS feed URL. Create a filter to sync selected events types.
-    Keep it up to date with a new ICS feed URL that sync automatically.</div>
-    <template id="templateForm"><form class="mainForm" style="border: solid red">
-                <label>ICS feed URL: <input class="url" type="url" ></label>
-                <button type="button">Get events</button>
-    </form></template>
-    <div id="formsDiv" style="border: solid blue">
-        <button onclick="addForm()">Add calendar</button>
-        <button onclick="removeForm()">Remove calendar</button>
+    <template id="templateForm">
+        <form action="javascript:void(0)" class="mainForm verticalCenter">
+            <label>ICS feed URL:</label>
+            <div class="horizontalCenter urlDiv">
+                <label>
+                    <input class="url" type="url" placeholder="Paste your ICS feed URL" name="url">
+                </label>
+                <button title="Obtener lista de eventos"><span class="material-symbols-outlined">arrow_forward</span></button>
+                <button title="Eliminar calendario"><span class="material-symbols-outlined">close</span></button>
+            </div>
+        </form>
+    </template>
+
+    <div id="formsDiv"></div>
+    <button class="button" onclick="addForm()" id="addButton">&plus; Add calendar</button>
+    <button onclick="generateLink()" class="button blueButton">Generate Link</button>
+    <div id="linkDiv" class="verticalCenter" style="display: none">
+        <span style="color: #53d769">¡Link generado correctamente!</span>
+        <div id="linkInputDiv" class="horizontalCenter">
+            <label><input type="text" id="linkInput" class="url" readonly></label>
+            <button id="copyButton" class="button">Copiar</button>
+        </div>
     </div>
 
-    <button onclick="generateLink()">Generate Link</button>
-    <pre id="codeOutput"></pre>
+
+</div>
 </body>
 </html>
