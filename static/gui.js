@@ -1,4 +1,5 @@
 function getEvents(button) {
+    button.disabled = true
     // Eliminar el form anterior
     const form = button.parentElement.parentElement;
     const toDelete = form.querySelector(".optionsDiv")
@@ -53,6 +54,8 @@ function getEvents(button) {
             }
         });
         form.appendChild(optionsDiv)
+
+        button.disabled = false
     })
 }
 
@@ -60,6 +63,9 @@ function getEvents(button) {
 function generateLink(){
     const data = []
     const forms = document.getElementsByClassName("mainForm")
+    const calendarName = document.getElementById("calendarName").value
+    if (calendarName !== '') data.push([calendarName])
+
     Array.from(forms).forEach(form => {
         const events = form.querySelectorAll('input[type="checkbox"]')
         let selectedEvents = []

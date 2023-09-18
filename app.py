@@ -1,6 +1,7 @@
 import asyncio
 
 from flask import Flask, render_template, Response, request, jsonify
+from ics.grammar.parse import ContentLine
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import encoder
@@ -16,6 +17,7 @@ lock_get_event = threading.Lock()
 
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
+
 @app.route('/')
 def home():
     return render_template('gui.html')
@@ -28,26 +30,28 @@ def get_calendar(raw_data):
             if raw_data is not None:
                 data = json.loads(encoder.utf8_base64_url_safe_decode(raw_data))
                 new_calendar = Calendar()
-                for e in data:
-                    url = e[0]
-                    calendar = Calendar(requests.get(url).text)
-                    for event in calendar.events:
-                        if any(cadena.lower() in event.name.lower() for cadena in e[1]):
-                            new_calendar.events.add(event)
+                new_calendar.creator = "Nacho Mata | nachomata.es"
+                for element in data:
+                    if len(element) == 1:
+                        new_calendar.extra.append(ContentLine(name="X-WR-CALNAME", value=element[0]))
+                        new_calendar.extra.append(ContentLine(name="SUMMARY", value=element[0]))
+                    else:
+                        url = element[0]
+                        calendar = Calendar(requests.get(url).text)
+                        for event in calendar.events:
+                            if any(cadena.lower() in event.name.lower() for cadena in element[1]):
+                                new_calendar.events.add(event)
                 ip_cliente = request.headers.get('X-Forwarded-For', request.remote_addr)
                 tel.send_message(ip_cliente, data)
                 return Response(new_calendar.serialize(), content_type='text/calendar')
-        except Exception as e:
+        except TypeError as element:
             message = f"Nueva petición desde:\n"
             ips = request.headers.get('X-Forwarded-For', request.remote_addr).split(', ')
             for ip in ips:
                 message += f"    - [{ip}](https://tools.keycdn.com/geo?host={ip})\n"
 
-            message += f"con los datos: \n{raw_data}\n\nError: {e}"
+            message += f"con los datos: \n{raw_data}\n\nError: {element}"
             asyncio.run(tel.send_telegram_message(message))
-
-
-
 
 
 @app.route('/getEvents', methods=['POST'])

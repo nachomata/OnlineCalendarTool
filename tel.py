@@ -19,9 +19,11 @@ def send_message(remote_addr, data):
         message += f"    - [{ip}](https://tools.keycdn.com/geo?host={ip})\n"
 
     message += "con los datos: \n"
+    if len(data[0]) == 1:
+        message += f"    - Nombre: {data.pop(0)}"
     for e in data:
         url = e[0]
-        message += f"\n    -URL: {url} con las asignaturas:\n"
+        message += f"\n    - URL: {url} con las asignaturas:\n"
         for cadena in e[1]:
             message += f"        · {cadena}\n"
     message += f"Total {len(data)} enlaces"

@@ -132,6 +132,7 @@ h1{
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.2s ease 0s;
 }
 .mainForm button:hover{
     background-color: #e4e0ea;
@@ -175,4 +176,21 @@ h1{
     background-color: #5ba4fc;
     box-shadow: #4374b7 0 -1px 0 0 inset;
     margin-right: 8px;
+}
+
+#labelCalendarName{
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    color: #7244d1;
+    font-weight: bold;
+}
+#labelCalendarName span{
+    margin-left: 16px;
+}
+
+#calendarName{
+    margin: 10px;
+    align-self: stretch;
+    width: auto;
 }
