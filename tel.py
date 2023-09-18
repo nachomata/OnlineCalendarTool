@@ -9,16 +9,15 @@ TELEGRAM_CHAT_ID = config('TELEGRAM_CHAT_ID')
 
 async def send_telegram_message(message):
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
+    await bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode="Markdown")
 
 
 def send_message(remote_addr, data):
-    message = f"Nueva petición desde:"
-    if not isinstance(remote_addr, str):
-        for ip in remote_addr:
-            message += f"    - [{ip}](https://tools.keycdn.com/geo?host={ip})\n"
-    else:
-        message += f"    - [{remote_addr}](https://tools.keycdn.com/geo?host={remote_addr})\n"
+    message = f"Nueva petición desde:\n"
+    ips = remote_addr.split(', ')
+    for ip in ips:
+        message += f"    - [{ip}](https://tools.keycdn.com/geo?host={ip})\n"
+
     message += "con los datos: \n"
     for e in data:
         url = e[0]
