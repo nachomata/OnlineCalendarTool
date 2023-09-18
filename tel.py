@@ -25,4 +25,4 @@ def send_message(remote_addr, data):
         for cadena in e[1]:
             message += f"        · {cadena}\n"
     message += f"Total {len(data)} enlaces"
-    asyncio.run(send_telegram_message(message))  # Usa asyncio.run para ejecutar la función asincrónica.
+    asyncio.run(send_telegram_message(message))

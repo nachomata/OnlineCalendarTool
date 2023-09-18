@@ -21,22 +21,30 @@ def home():
     return render_template('gui.html')
 
 
-@app.route('/c/<string:data>')
-def get_calendar(data):
+@app.route('/c/<string:raw_data>')
+def get_calendar(raw_data):
     with lock_get_calendar:
-        if data is not None:
-            data = json.loads(encoder.utf8_base64_url_safe_decode(data))
-            new_calendar = Calendar()
-            for e in data:
-                url = e[0]
-                calendar = Calendar(requests.get(url).text)
-                for event in calendar.events:
-                    if any(cadena.lower() in event.name.lower() for cadena in e[1]):
-                        new_calendar.events.add(event)
-            ip_cliente = request.headers.get('X-Forwarded-For', request.remote_addr)
-            tel.send_message(ip_cliente, data)
-            #tel.send_message(request.remote_addr, data)
-            return Response(str(new_calendar), content_type='text/calendar')
+        try:
+            if raw_data is not None:
+                data = json.loads(encoder.utf8_base64_url_safe_decode(raw_data))
+                new_calendar = Calendar()
+                for e in data:
+                    url = e[0]
+                    calendar = Calendar(requests.get(url).text)
+                    for event in calendar.events:
+                        if any(cadena.lower() in event.name.lower() for cadena in e[1]):
+                            new_calendar.events.add(event)
+                ip_cliente = request.headers.get('X-Forwarded-For', request.remote_addr)
+                tel.send_message(ip_cliente, data)
+                return Response(str(new_calendar), content_type='text/calendar')
+        except Exception as e:
+            message = f"Nueva petición desde:\n"
+            ips = request.headers.get('X-Forwarded-For', request.remote_addr).split(', ')
+            for ip in ips:
+                message += f"    - [{ip}](https://tools.keycdn.com/geo?host={ip})\n"
+
+            message += f"con los datos: \n{raw_data}\n\nError: {e}"
+            asyncio.run(tel.send_telegram_message(message))
 
 
 
