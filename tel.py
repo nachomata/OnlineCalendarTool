@@ -13,11 +13,17 @@ async def send_telegram_message(message):
 
 
 def send_message(remote_addr, data):
-    message = f"Nueva petición desde {remote_addr} con los datos:\n"
+    message = f"Nueva petición desde:"
+    if not isinstance(remote_addr, str):
+        for ip in remote_addr:
+            message += f"    - [{ip}](https://tools.keycdn.com/geo?host={ip})\n"
+    else:
+        message += f"    - [{remote_addr}](https://tools.keycdn.com/geo?host={remote_addr})\n"
+    message += "con los datos: \n"
     for e in data:
         url = e[0]
-        message += f"URL: {url} con las asignaturas:\n"
+        message += f"\n    -URL: {url} con las asignaturas:\n"
         for cadena in e[1]:
-            message += f"    - {cadena}\n"
+            message += f"        · {cadena}\n"
     message += f"Total {len(data)} enlaces"
     asyncio.run(send_telegram_message(message))  # Usa asyncio.run para ejecutar la función asincrónica.
