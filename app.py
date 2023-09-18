@@ -33,7 +33,9 @@ def get_calendar(data):
                 for event in calendar.events:
                     if any(cadena.lower() in event.name.lower() for cadena in e[1]):
                         new_calendar.events.add(event)
-            tel.send_message(request.remote_addr, data)
+            ip_cliente = request.headers.get('X-Forwarded-For', request.remote_addr)
+            tel.send_message(ip_cliente, data)
+            #tel.send_message(request.remote_addr, data)
             return Response(str(new_calendar), content_type='text/calendar')
 
 
