@@ -2,3 +2,4 @@ Flask
 Gunicorn
 requests
 ics
+python-telegram-bot
