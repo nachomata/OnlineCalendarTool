@@ -1,6 +1,8 @@
 import asyncio
 
 from flask import Flask, render_template, Response, request, jsonify
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 import encoder
 import requests
 import json
@@ -12,7 +14,7 @@ app = Flask(__name__)
 lock_get_calendar = threading.Lock()
 lock_get_event = threading.Lock()
 
-
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
 @app.route('/')
 def home():
