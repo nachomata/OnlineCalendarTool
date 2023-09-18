@@ -1,13 +1,17 @@
+import asyncio
+
 from flask import Flask, render_template, Response, request, jsonify
 import encoder
 import requests
 import json
 from ics import Calendar
 import threading
+import tel
 
 app = Flask(__name__)
 lock_get_calendar = threading.Lock()
 lock_get_event = threading.Lock()
+
 
 
 @app.route('/')
@@ -17,17 +21,21 @@ def home():
 
 @app.route('/c/<string:data>')
 def get_calendar(data):
-    if data is not None:
-        data = json.loads(encoder.utf8_base64_url_safe_decode(data))
-        new_calendar = Calendar()
-        for e in data:
-            url = e[0]
-            calendar = Calendar(requests.get(url).text)
-            for event in calendar.events:
-                if any(cadena.lower() in event.name.lower() for cadena in e[1]):
-                    new_calendar.events.add(event)
+    with lock_get_calendar:
+        if data is not None:
+            data = json.loads(encoder.utf8_base64_url_safe_decode(data))
+            new_calendar = Calendar()
+            for e in data:
+                url = e[0]
+                calendar = Calendar(requests.get(url).text)
+                for event in calendar.events:
+                    if any(cadena.lower() in event.name.lower() for cadena in e[1]):
+                        new_calendar.events.add(event)
+            tel.send_message(request.remote_addr, data)
+            return Response(str(new_calendar), content_type='text/calendar')
 
-        return Response(str(new_calendar), content_type='text/calendar')
+
+
 
 
 @app.route('/getEvents', methods=['POST'])
