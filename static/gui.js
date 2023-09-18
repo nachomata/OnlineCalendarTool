@@ -124,6 +124,11 @@ function addForm(){
         removeForm(this)
     }
 
+    newForm.querySelector(".url").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            this.parentElement.nextElementSibling.click()
+        }
+    });
     formDivs.appendChild(newForm)
 }
 
@@ -137,4 +142,9 @@ function removeForm(button){
 
 document.addEventListener("DOMContentLoaded", function() {
     addForm();
+    document.getElementById("calendarName").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            document.querySelector("#main > button.button.blueButton").click()
+        }
+    })
 });
