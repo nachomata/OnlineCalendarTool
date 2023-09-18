@@ -3,3 +3,4 @@ Gunicorn
 requests
 ics
 python-telegram-bot
+python-decouple
