@@ -36,7 +36,7 @@ def get_calendar(raw_data):
                             new_calendar.events.add(event)
                 ip_cliente = request.headers.get('X-Forwarded-For', request.remote_addr)
                 tel.send_message(ip_cliente, data)
-                return Response(str(new_calendar), content_type='text/calendar')
+                return Response(new_calendar.serialize(), content_type='text/calendar')
         except Exception as e:
             message = f"Nueva petición desde:\n"
             ips = request.headers.get('X-Forwarded-For', request.remote_addr).split(', ')
