@@ -74,7 +74,6 @@ def get_event():
 
             return jsonify(events), 200
         except Exception as e:
-            print(e)
             return jsonify({'error': 'Invalid URL'}), 400
 
 

@@ -13,7 +13,7 @@ function getEvents(button) {
     if (toDelete != null) form.removeChild(toDelete)
 
     // Crear el cargando...
-    form.appendChild(document.createTextNode("Obteniendo eventos desde URL..."))
+    form.appendChild(document.createTextNode("Fetching events from URL..."))
 
     // hacer el fetch
     const url = input.value
@@ -24,7 +24,18 @@ function getEvents(button) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({url: url})
         }
-    ).then(response => response.json()).then(data => {
+    ).then(response => {
+        if (response.status === 400) {
+            form.lastChild.textContent = "Error ICS feed URL not valid: no ICS file returned"
+            setTimeout(() => {
+                button.disabled = false
+                form.removeChild(form.lastChild)
+            }, 2000)
+        } else if (response.status === 200) {
+            return response.json();
+        }
+    } ).then(data => {
+        if (data == undefined) return
         // eliminar el cargando...
         form.removeChild(form.lastChild)
 
