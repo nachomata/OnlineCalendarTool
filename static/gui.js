@@ -1,5 +1,12 @@
 function getEvents(button) {
     button.disabled = true
+    //Comprobar que hay url
+    const input = button.previousElementSibling.querySelector(".url")
+    if(!input.reportValidity()){
+        button.disabled = false
+        return
+    }
+
     // Eliminar el form anterior
     const form = button.parentElement.parentElement;
     const toDelete = form.querySelector(".optionsDiv")
@@ -9,7 +16,7 @@ function getEvents(button) {
     form.appendChild(document.createTextNode("Obteniendo eventos desde URL..."))
 
     // hacer el fetch
-    const url = button.previousElementSibling.querySelector(".url").value
+    const url = input.value
     fetch(
         '/getEvents',
         {
@@ -61,8 +68,15 @@ function getEvents(button) {
 
 
 function generateLink(){
-    const data = []
+    // check if data is correct
     const forms = document.getElementsByClassName("mainForm")
+
+    for (let i = 0; i < forms.length; i++){
+        const input = forms[i].querySelector(".url")
+        if(!input.reportValidity()) return
+    }
+
+    const data = []
     const calendarName = document.getElementById("calendarName").value
     if (calendarName !== '') data.push([calendarName])
 
