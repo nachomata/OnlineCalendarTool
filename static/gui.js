@@ -85,6 +85,11 @@ function generateLink(){
     for (let i = 0; i < forms.length; i++){
         const input = forms[i].querySelector(".url")
         if(!input.reportValidity()) return
+        const checkboxes = forms[i].querySelectorAll('input[type="checkbox"]:not(.selectAll):checked')
+        if (checkboxes.length === 0){
+            alert("You must select at least one event per calendar.")
+            return
+        }
     }
 
     const data = []
@@ -92,12 +97,10 @@ function generateLink(){
     if (calendarName !== '') data.push([calendarName])
 
     Array.from(forms).forEach(form => {
-        const events = form.querySelectorAll('input[type="checkbox"]')
+        const events = form.querySelectorAll('input[type="checkbox"]:not(.selectAll):checked')
         let selectedEvents = []
         Array.from(events).forEach(event => {
-            if (event.checked && !event.classList.contains("selectAll")) {
-                selectedEvents.push(event.value)
-            }
+            selectedEvents.push(event.value)
         })
         data.push([form.querySelector(".url").value, selectedEvents])
     })
